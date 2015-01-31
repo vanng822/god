@@ -16,7 +16,7 @@ Keep an eye on some process running
 	
 ### run
 
-	>> go run main.go -pid example.pid -s ./example/test_bin  -p 8080 -c config.conf
+	>> go run main.go --pidfile example.pid -s ./example/test_bin  -p 8080 -c config.conf
 	
 ### restart
 
