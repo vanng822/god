@@ -30,7 +30,7 @@ func (d *God) Start() {
 	}
 	d.cmd = cmd
 	d.started = time.Now()
-	go d.Watch()
+	d.Watch()
 }
 
 func (d *God) Pid() int {
@@ -42,25 +42,18 @@ func (d *God) Wait() error {
 }
 
 func (d *God) Watch() {
-	restart := false
-	for {
-		log.Printf("Waiting for command to finish...")
-		err := d.Wait()
-		if err == nil {
-			log.Println("Terminate without error")
-			break
-		}
-		log.Printf("Command finished with error: %v", err)
-		if time.Now().Sub(d.started).Seconds() < 2 {
-			log.Printf("Program '%s' restart too fast. No restart!", d.name)
-		} else {
-			restart = true
-		}
-		break
+	log.Printf("Waiting for command to finish...")
+	err := d.Wait()
+	if err == nil {
+		log.Println("Terminate without error")
+		return
 	}
-	if restart {
-		d.Restart()
+	log.Printf("Command finished with error: %v", err)
+	if time.Now().Sub(d.started).Seconds() < 2 {
+		log.Printf("Program '%s' restart too fast. No restart!", d.name)
+		return
 	}
+	d.Restart()
 }
 
 func (d *God) Restart() {

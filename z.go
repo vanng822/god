@@ -35,14 +35,14 @@ func (z *Goz) Start() {
 	}
 
 	log.Println(args.args)
-	
+
 	if len(args.programs) > 0 {
 		for _, p := range args.programs {
 			z.Add(NewGod(p, args.args))
 		}
 		// need to handle panic and shut down others
 		for _, d := range z.gods {
-			d.Start()
+			go d.Start()
 		}
 		sigc := make(chan os.Signal, 1)
 		signal.Notify(sigc, os.Kill, os.Interrupt, syscall.SIGTERM, syscall.SIGHUP)
