@@ -33,17 +33,9 @@ func (d *God) Start() {
 	d.Watch()
 }
 
-func (d *God) Pid() int {
-	return d.cmd.Process.Pid
-}
-
-func (d *God) Wait() error {
-	return d.cmd.Wait()
-}
-
 func (d *God) Watch() {
 	log.Printf("Waiting for command to finish...")
-	err := d.Wait()
+	err := d.cmd.Wait()
 	if err == nil {
 		log.Println("Terminate without error")
 		return
