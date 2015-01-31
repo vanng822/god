@@ -5,7 +5,8 @@ go:
 
 
 install:
-  - go get github.com/stretchr/testify/assert
+ - go get github.com/vanng822/gopid 
+ - go get github.com/stretchr/testify/assert
 
 script:
   - go test -v 
