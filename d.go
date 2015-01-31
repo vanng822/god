@@ -62,7 +62,14 @@ func (d *God) Restart() {
 	d.Start()
 }
 
-func (d *God) stopWait(pid int) {
+func (d *God) Stop() {
+	pid := d.cmd.Process.Pid
+	d.cmd.Process.Signal(syscall.SIGTERM)
+	stopWait(pid)
+}
+
+
+func stopWait(pid int) {
 	// wait for process to completely terminated
 	if process, err := os.FindProcess(pid); err != nil {
 		if _, err := process.Wait(); err != nil {
@@ -74,10 +81,4 @@ func (d *God) stopWait(pid int) {
 			}
 		}
 	}
-}
-
-func (d *God) Stop() {
-	pid := d.cmd.Process.Pid
-	d.cmd.Process.Signal(syscall.SIGTERM)
-	d.stopWait(pid)
 }
