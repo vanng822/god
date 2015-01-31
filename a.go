@@ -12,7 +12,7 @@ type Args struct {
 	programs []string
 }
 
-func (a *Args) Parse() error {
+func (a *Args) Parse() {
 	args := os.Args[1:]
 	max := len(args)
 
@@ -39,7 +39,6 @@ func (a *Args) Parse() error {
 		}
 		a.args = append(a.args, args[i])
 	}
-	return nil
 }
 
 func isArgValue(value string) bool {

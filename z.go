@@ -25,10 +25,8 @@ func (z *Goz) Add(d *God) {
 
 func (z *Goz) Start() {
 	args := Args{}
-	if err := args.Parse(); err != nil {
-		panic(err)
-	}
-
+	args.Parse()
+	
 	if args.pidFile != "" {
 		gopid.CheckPid(args.pidFile, args.force)
 		gopid.CreatePid(args.pidFile)
