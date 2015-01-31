@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"runtime"
 )
 
 type Goz struct {
@@ -84,4 +85,5 @@ func (z *Goz) Restart() {
 	for _, d := range z.gods {
 		d.Restart()
 	}
+	log.Printf("Number of goroutines %d", runtime.NumGoroutine())
 }
