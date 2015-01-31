@@ -58,9 +58,7 @@ func (d *God) Watch() {
 
 func (d *God) Restart() {
 	log.Printf("Restart program %s", d.name)
-	pid := d.cmd.Process.Pid
-	d.cmd.Process.Signal(syscall.SIGTERM)
-	d.stopWait(pid)
+	d.Stop()
 	d.Start()
 }
 
