@@ -12,42 +12,36 @@ type Args struct {
 	programs []string
 }
 
-func NewArgs() *Args {
-	args := new(Args)
-	args.args = make([]string, 0)
-	return args
-}
-
-func (as *Args) isValue(value string) bool {
-	return strings.Index(value, "-") != 0
-}
-
-func (as *Args) Parse() error {
+func (a *Args) Parse() error {
 	args := os.Args[1:]
 	max := len(args)
 
 	for i := 0; i < max; i++ {
 		if args[i] == "-pid" {
 			i++
-			if !as.isValue(args[i]) {
+			if !isArgValue(args[i]) {
 				panic("Invalid pid value")
 			}
-			as.pidFile = args[i]
+			a.pidFile = args[i]
 			continue
 		}
 		if args[i] == "-s" {
 			i++
-			if !as.isValue(args[i]) {
+			if !isArgValue(args[i]) {
 				panic("Invalid program")
 			}
-			as.programs = append(as.programs, args[i])
+			a.programs = append(a.programs, args[i])
 			continue
 		}
 		if args[i] == "-f" {
-			as.force = true
+			a.force = true
 			continue
 		}
-		as.args = append(as.args, args[i])
+		a.args = append(a.args, args[i])
 	}
 	return nil
+}
+
+func isArgValue(value string) bool {
+	return strings.Index(value, "-") != 0
 }
