@@ -2,11 +2,12 @@ package god
 
 import (
 	"log"
-	"os"
 	"os/exec"
 	"syscall"
 	"time"
 )
+
+var MIMIMUM_AGE = 2.0
 
 type God struct {
 	cmd      *exec.Cmd
@@ -48,7 +49,7 @@ func (d *God) Watch() {
 	}
 
 	log.Printf("Command finished with error: %v", err)
-	if time.Now().Sub(d.started).Seconds() < 2 {
+	if time.Now().Sub(d.started).Seconds() < MIMIMUM_AGE {
 		log.Printf("Program '%s' restart too fast. No restart!", d.name)
 		return
 	}
@@ -57,6 +58,8 @@ func (d *God) Watch() {
 
 func (d *God) Restart() {
 	log.Printf("Restart program %s", d.name)
+	// stopping race between goroutines
+	// should figure out how to solve with channel
 	d.stopping = true
 	d.Stop()
 	d.stopping = false
@@ -64,21 +67,16 @@ func (d *God) Restart() {
 }
 
 func (d *God) Stop() {
-	pid := d.cmd.Process.Pid
 	d.cmd.Process.Signal(syscall.SIGTERM)
-	stopWait(pid)
+	// this is still bad, let see if we can fix with channel one day
+	d.waitExited()
 }
 
-func stopWait(pid int) {
-	// wait for process to completely terminated
-	if process, err := os.FindProcess(pid); err != nil {
-		if _, err := process.Wait(); err != nil {
-			for i := 0; i < 50; i++ {
-				time.Sleep(5 * time.Millisecond)
-				if _, err := os.FindProcess(pid); err != nil {
-					break
-				}
-			}
+func (d *God) waitExited() {
+	for i := 0; i < 400; i++ {
+		if d.cmd.ProcessState != nil {
+			return
 		}
+		time.Sleep(5 * time.Millisecond)
 	}
 }
