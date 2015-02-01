@@ -28,8 +28,7 @@ Example: go run example/main.go --pidfile god.pid -s ./example/test_bin -p 8080
 	`)
 }
 
-func (a *Args) Parse() error {
-	args := os.Args[1:]
+func (a *Args) Parse(args []string) error {
 	max := len(args)
 	for i := 0; i < max; i++ {
 		if args[i] == "--help" {

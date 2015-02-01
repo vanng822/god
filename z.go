@@ -26,7 +26,7 @@ func (z *Goz) Add(d *God) {
 func (z *Goz) Start() {
 	args := Args{}
 
-	if err := args.Parse(); err != nil {
+	if err := args.Parse(os.Args[1:]); err != nil {
 		usage()
 		os.Exit(0)
 	}
