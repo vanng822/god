@@ -85,6 +85,7 @@ programExit:
 
 func (z *Goz) Stop() {
 	for _, d := range z.gods {
+		d.stopping = true
 		d.Stop()
 	}
 }
