@@ -11,6 +11,7 @@ import (
 
 type Goz struct {
 	gods []*God
+	sigc chan os.Signal
 }
 
 func NewGoz() *Goz {
@@ -48,10 +49,10 @@ func (z *Goz) Start() {
 	}
 
 	log.Printf("Number of goroutines %d after start", runtime.NumGoroutine())
-	sigc := make(chan os.Signal, 1)
-	signal.Notify(sigc, os.Kill, os.Interrupt, syscall.SIGTERM, syscall.SIGHUP)
+	z.sigc = make(chan os.Signal, 1)
+	signal.Notify(z.sigc, os.Kill, os.Interrupt, syscall.SIGTERM, syscall.SIGHUP)
 	for {
-		sig := <-sigc
+		sig := <-z.sigc
 		log.Printf("Got signal %v", sig)
 		switch sig {
 		case syscall.SIGHUP:
