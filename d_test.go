@@ -59,3 +59,14 @@ func TestGodRestartKill(t *testing.T) {
 	d.stopping = true
 	d.Stop()
 }
+
+func TestGodRestartTooFast(t *testing.T) {
+	d := NewGod("sleep", []string{"10"})
+	MIMIMUM_AGE = 2
+	go d.Start()
+	time.Sleep(100 * time.Millisecond)
+	pid := d.cmd.Process.Pid
+	d.cmd.Process.Kill()
+	time.Sleep(100 * time.Millisecond)
+	assert.Equal(t, pid, d.cmd.Process.Pid)
+}
