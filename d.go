@@ -36,6 +36,9 @@ func (d *God) Start() {
 }
 
 func (d *God) Watch() {
+	if d.cmd == nil {
+		panic("You must call Start first")
+	}
 	log.Printf("Waiting for command to finish...")
 	err := d.cmd.Wait()
 	if err == nil {
@@ -57,6 +60,9 @@ func (d *God) Watch() {
 }
 
 func (d *God) Restart() {
+	if d.cmd == nil {
+		panic("You must call Start first")
+	}
 	log.Printf("Restart program %s", d.name)
 	// stopping race between goroutines
 	// should figure out how to solve with channel
@@ -67,6 +73,9 @@ func (d *God) Restart() {
 }
 
 func (d *God) Stop() {
+	if d.cmd == nil {
+		panic("You must call Start first")
+	}
 	d.cmd.Process.Signal(syscall.SIGTERM)
 	// this is still bad, let see if we can fix with channel one day
 	d.waitExited()

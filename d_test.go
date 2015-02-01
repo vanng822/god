@@ -46,7 +46,6 @@ func TestGodRestartWhileRunning(t *testing.T) {
 	d.Stop()
 }
 
-
 func TestGodRestartKill(t *testing.T) {
 	d := NewGod("sleep", []string{"10"})
 	MIMIMUM_AGE = 0.1
@@ -69,4 +68,18 @@ func TestGodRestartTooFast(t *testing.T) {
 	d.cmd.Process.Kill()
 	time.Sleep(100 * time.Millisecond)
 	assert.Equal(t, pid, d.cmd.Process.Pid)
+}
+
+func TestGodPanics(t *testing.T) {
+	d := NewGod("sleep", []string{"10"})
+	assert.Panics(t, func() {
+		d.Restart()
+	})
+	assert.Panics(t, func() {
+		d.Watch()
+	})
+	
+	assert.Panics(t, func() {
+		d.Stop()
+	})
 }
