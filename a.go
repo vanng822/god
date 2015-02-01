@@ -38,7 +38,7 @@ func (a *Args) Parse(args []string) error {
 		if args[i] == "--pidfile" {
 			i++
 			if i >= max || !isArgValue(args[i]) {
-				return fmt.Errorf("Invalid pid value")
+				return fmt.Errorf("Invalid pidfile value")
 			}
 			a.pidFile = args[i]
 			continue

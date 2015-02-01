@@ -39,3 +39,39 @@ func TestArgsMultipleProgram(t *testing.T) {
 	assert.Equal(t, []string{"-p", "8080"}, a.args)
 	assert.Equal(t, []string{"./example/test_bin", "./example/test_bin2"}, a.programs)
 }
+
+func TestArgsInvalidProgram(t *testing.T) {
+	a := Args{}
+	
+	args := []string{"--pidfile", "test.pid", "--pidclean", "-s", "-p", "8080"}
+	err := a.Parse(args)
+	assert.NotNil(t, err)
+	assert.Regexp(t, "Invalid program", err)
+}
+
+func TestArgsInvalidNoProgram(t *testing.T) {
+	a := Args{}
+	
+	args := []string{"--pidfile", "test.pid", "--pidclean", "-s"}
+	err := a.Parse(args)
+	assert.NotNil(t, err)
+	assert.Regexp(t, "Invalid program", err)
+}
+
+func TestArgsInvalidPidfile(t *testing.T) {
+	a := Args{}
+	
+	args := []string{"--pidfile", "--pidclean"}
+	err := a.Parse(args)
+	assert.NotNil(t, err)
+	assert.Regexp(t, "Invalid pidfile value", err)
+}
+
+func TestArgsInvalidNoPidfile(t *testing.T) {
+	a := Args{}
+	
+	args := []string{"--pidclean", "--pidfile"}
+	err := a.Parse(args)
+	assert.NotNil(t, err)
+	assert.Regexp(t, "Invalid pidfile value", err)
+}
