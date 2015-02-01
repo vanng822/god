@@ -14,6 +14,12 @@ func TestArgsEmpty(t *testing.T) {
 	assert.Empty(t, a.programs)
 }
 
+func TestArgsHelp(t *testing.T) {
+	a := Args{}
+	assert.Nil(t, a.Parse([]string{"--help"}))
+	assert.True(t, a.help)
+}
+
 func TestArgsOneProgram(t *testing.T) {
 	a := Args{}
 	

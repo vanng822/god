@@ -3,7 +3,6 @@ package god
 import (
 	"fmt"
 	"log"
-	"os"
 	"strings"
 )
 
@@ -12,6 +11,7 @@ type Args struct {
 	pidFile  string
 	force    bool
 	programs []string
+	help     bool
 }
 
 func usage() {
@@ -32,8 +32,8 @@ func (a *Args) Parse(args []string) error {
 	max := len(args)
 	for i := 0; i < max; i++ {
 		if args[i] == "--help" {
-			usage()
-			os.Exit(0)
+			a.help = true
+			return nil
 		}
 		if args[i] == "--pidfile" {
 			i++

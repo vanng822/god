@@ -10,7 +10,7 @@ import (
 )
 
 type Goz struct {
-	gods    []*God
+	gods []*God
 }
 
 func NewGoz() *Goz {
@@ -26,12 +26,7 @@ func (z *Goz) Add(d *God) {
 func (z *Goz) Start() {
 	args := Args{}
 
-	if err := args.Parse(os.Args[1:]); err != nil {
-		usage()
-		os.Exit(0)
-	}
-
-	if len(args.programs) == 0 {
+	if err := args.Parse(os.Args[1:]); err != nil || args.help || len(args.programs) == 0 {
 		usage()
 		os.Exit(0)
 	}
