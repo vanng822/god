@@ -28,7 +28,7 @@ func (z *Goz) Start() {
 
 	if err := args.Parse(os.Args[1:]); err != nil || args.help || len(args.programs) == 0 {
 		usage()
-		os.Exit(0)
+		return
 	}
 
 	if args.pidFile != "" {
