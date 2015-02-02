@@ -31,15 +31,17 @@ func (z *Goz) Start() {
 		usage()
 		return
 	}
-
+	
 	if args.pidFile != "" {
 		gopid.CheckPid(args.pidFile, args.force)
 		gopid.CreatePid(args.pidFile)
 		defer gopid.CleanPid(args.pidFile)
 	}
 
-	for _, p := range args.programs {
-		z.Add(NewGod(p, args.args))
+	for i, p := range args.programs {
+		pargs := args.programArgs[i]
+		pargs = append(pargs, args.args...)
+		z.Add(NewGod(p, pargs))
 	}
 
 	// need to handle panic and shut down others

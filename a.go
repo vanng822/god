@@ -7,11 +7,12 @@ import (
 )
 
 type Args struct {
-	args     []string
-	pidFile  string
-	force    bool
-	programs []string
-	help     bool
+	args        []string
+	pidFile     string
+	force       bool
+	programs    []string
+	programArgs [][]string
+	help        bool
 }
 
 func usage() {
@@ -49,6 +50,9 @@ func (a *Args) Parse(args []string) error {
 				return fmt.Errorf("Invalid program")
 			}
 			a.programs = append(a.programs, args[i])
+			programArgs := findProgramArgs(args, i+1)
+			a.programArgs = append(a.programArgs, programArgs)
+			i += len(programArgs)
 			continue
 		}
 		if args[i] == "--pidclean" {
@@ -59,6 +63,19 @@ func (a *Args) Parse(args []string) error {
 	}
 
 	return nil
+}
+
+func findProgramArgs(args []string, start int) []string {
+	var pargs []string
+	max := len(args)
+	for n := start; n < max; n++ {
+		if !isArgValue(args[n]) {
+			break
+		}
+		pargs = append(pargs, args[n])
+	}
+
+	return pargs
 }
 
 func isArgValue(value string) bool {

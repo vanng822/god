@@ -46,6 +46,21 @@ func TestArgsMultipleProgram(t *testing.T) {
 	assert.Equal(t, []string{"./example/test_bin", "./example/test_bin2"}, a.programs)
 }
 
+func TestArgsMultipleProgramArgs(t *testing.T) {
+	a := Args{}
+	args := []string{"--pidfile", "test.pid", "--pidclean",
+		"-s", "sleep", "10",
+		"-s", "node", "server.js",
+		"-p", "8080"}
+
+	assert.Nil(t, a.Parse(args))
+	assert.Equal(t, "test.pid", a.pidFile)
+	assert.True(t, a.force)
+	assert.Equal(t, []string{"-p", "8080"}, a.args)
+	assert.Equal(t, []string{"sleep", "node"}, a.programs)
+	assert.Equal(t, [][]string{{"10"}, {"server.js"}}, a.programArgs)
+}
+
 func TestArgsInvalidProgram(t *testing.T) {
 	a := Args{}
 	
