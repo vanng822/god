@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"strconv"
 )
 
 func usage() {
@@ -27,6 +28,7 @@ type Args struct {
 	programs    []string
 	programArgs [][]string
 	help        bool
+	interval    int
 }
 
 func (a *Args) Parse(args []string) error {
@@ -42,6 +44,18 @@ func (a *Args) Parse(args []string) error {
 				return fmt.Errorf("Invalid pidfile value")
 			}
 			a.pidFile = args[i]
+			continue
+		}
+		if args[i] == "--interval" {
+			i++
+			if i >= max || !isArgValue(args[i]) {
+				return fmt.Errorf("Invalid interval value")
+			}
+			interval, err := strconv.Atoi(args[i])
+			if err != nil {
+				return fmt.Errorf("Invalid interval value")
+			}
+			a.interval = interval
 			continue
 		}
 		if args[i] == "-s" {

@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"runtime"
 	"syscall"
+	"time"
 )
 
 type Goz struct {
@@ -48,6 +49,18 @@ func (z *Goz) Start() {
 	log.Printf("Number of goroutines %d before start", runtime.NumGoroutine())
 	for _, d := range z.gods {
 		go d.Start()
+	}
+
+	if args.interval > 0 {
+		ticker := time.NewTicker(time.Duration(args.interval) * time.Second)
+		go func() {
+			for {
+				select {
+				case <-ticker.C:
+					z.Restart()
+				}
+			}
+		}()
 	}
 
 	log.Printf("Number of goroutines %d after start", runtime.NumGoroutine())
