@@ -96,7 +96,7 @@ func TestSignalKill(t *testing.T) {
 	os.Args = []string{"", "--pidfile", "testing.pid", "--pidclean", "-s", "sleep", "10"}
 	z := NewGoz()
 	go z.Start()
-	time.Sleep(100 * time.Millisecond)
+	time.Sleep(200 * time.Millisecond)
 	cmd := z.gods[0].cmd
 	assert.Nil(t, cmd.ProcessState)
 	z.sigc <- os.Kill
@@ -114,7 +114,7 @@ func TestSignalInterrupt(t *testing.T) {
 	os.Args = []string{"", "--pidfile", "testing.pid", "--pidclean", "-s", "sleep", "10"}
 	z := NewGoz()
 	go z.Start()
-	time.Sleep(100 * time.Millisecond)
+	time.Sleep(200 * time.Millisecond)
 	cmd := z.gods[0].cmd
 	assert.Nil(t, cmd.ProcessState)
 	z.sigc <- os.Interrupt
@@ -132,7 +132,7 @@ func TestSignalOther(t *testing.T) {
 	os.Args = []string{"", "--pidfile", "testing.pid", "--pidclean", "-s", "sleep", "10"}
 	z := NewGoz()
 	go z.Start()
-	time.Sleep(100 * time.Millisecond)
+	time.Sleep(200 * time.Millisecond)
 	cmd := z.gods[0].cmd
 	assert.Nil(t, cmd.ProcessState)
 	z.sigc <- syscall.SIGALRM
