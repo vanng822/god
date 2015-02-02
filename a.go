@@ -6,15 +6,6 @@ import (
 	"strings"
 )
 
-type Args struct {
-	args        []string
-	pidFile     string
-	force       bool
-	programs    []string
-	programArgs [][]string
-	help        bool
-}
-
 func usage() {
 	log.Printf(`
 Usage: go run daemonize.go --pidfile daemonize.pid --pidclean -s program args ...
@@ -27,6 +18,15 @@ Usage: go run daemonize.go --pidfile daemonize.pid --pidclean -s program args ..
 
 Example: go run example/main.go --pidfile god.pid -s ./example/test_bin -p 8080
 	`)
+}
+
+type Args struct {
+	args        []string
+	pidFile     string
+	force       bool
+	programs    []string
+	programArgs [][]string
+	help        bool
 }
 
 func (a *Args) Parse(args []string) error {
