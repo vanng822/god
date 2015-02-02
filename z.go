@@ -31,7 +31,7 @@ func (z *Goz) Start() {
 		usage()
 		return
 	}
-	
+
 	if args.pidFile != "" {
 		gopid.CheckPid(args.pidFile, args.force)
 		gopid.CreatePid(args.pidFile)
@@ -62,23 +62,19 @@ func (z *Goz) Start() {
 			break
 		case syscall.SIGTERM:
 			z.Stop()
-			goto programExit
+			return
 		case os.Kill:
 			z.Stop()
-			goto programExit
+			return
 		case os.Interrupt:
 			z.Stop()
-			goto programExit
+			return
 		default:
 			log.Printf("Unhandled signal %v, stop program", sig)
 			z.Stop()
-			goto programExit
-
+			return
 		}
-
 	}
-programExit:
-	log.Println("Program exit")
 }
 
 func (z *Goz) Stop() {
