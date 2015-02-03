@@ -51,7 +51,7 @@ func (z *Goz) Start() {
 		go d.Start()
 	}
 
-	if args.interval > 0 {
+	if float64(args.interval) > MIMIMUM_AGE {
 		ticker := time.NewTicker(time.Duration(args.interval) * time.Second)
 		go func() {
 			for {

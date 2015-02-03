@@ -3,22 +3,23 @@ package god
 import (
 	"fmt"
 	"log"
-	"strings"
 	"strconv"
+	"strings"
 )
 
 func usage() {
 	log.Printf(`
-Usage: go run daemonize.go --pidfile daemonize.pid --pidclean -s program args ...
+Usage: go run daemonize.go --pidfile daemonize.pid --pidclean --interval 86400 -s program args ...
 	--pidfile   A pidfile which process id will be stored.
 	--pidclean  Clean old pidfile if there is one and try to run this program
+	--interval  Number of seconds to restart all programs, given in integer. Minimum is %.0f seconds
 	-s          Program you want to run in background. Can repeat for multiple daemons
 	args        Other arguments that you want to pass to daemons
 	
 "go run daemonize.go" is your daemonize program. See example/main.go at https://github.com/vanng822/god
 
 Example: go run example/main.go --pidfile god.pid -s ./example/test_bin -p 8080
-	`)
+	`, MIMIMUM_AGE)
 }
 
 type Args struct {
@@ -54,6 +55,9 @@ func (a *Args) Parse(args []string) error {
 			interval, err := strconv.Atoi(args[i])
 			if err != nil {
 				return fmt.Errorf("Invalid interval value")
+			}
+			if float64(interval) <= MIMIMUM_AGE {
+				return fmt.Errorf("Minium value for interval is %.0f seconds", MIMIMUM_AGE)
 			}
 			a.interval = interval
 			continue

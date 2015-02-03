@@ -96,3 +96,27 @@ func TestArgsInvalidNoPidfile(t *testing.T) {
 	assert.NotNil(t, err)
 	assert.Regexp(t, "Invalid pidfile value", err)
 }
+
+func TestArgsInvalidIntervalNoValue(t *testing.T) {
+	a := Args{}
+	args := []string{"--interval", "--pidclean"}
+	err := a.Parse(args)
+	assert.NotNil(t, err)
+	assert.Regexp(t, "Invalid interval value", err)
+}
+
+func TestArgsInvalidIntervalSmallValue(t *testing.T) {
+	a := Args{}
+	args := []string{"--interval", "1"}
+	err := a.Parse(args)
+	assert.NotNil(t, err)
+	assert.Regexp(t, "Minium value for interval is 2 seconds", err)
+}
+
+func TestArgsInvalidIntervalNoneIntValue(t *testing.T) {
+	a := Args{}
+	args := []string{"--interval", "abc123"}
+	err := a.Parse(args)
+	assert.NotNil(t, err)
+	assert.Regexp(t, "Invalid interval value", err)
+}
