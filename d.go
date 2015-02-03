@@ -83,6 +83,11 @@ func (d *God) Stop() {
 	d.stopping = true
 	d.cmd.Process.Signal(syscall.SIGTERM)
 	d.waitExited()
+	// if not exited with SIGTERM we force with SIGKILL
+	if !d.Exited() {
+		d.cmd.Process.Signal(syscall.SIGKILL)
+		d.waitExited()
+	}
 	d.stopping = false
 }
 
