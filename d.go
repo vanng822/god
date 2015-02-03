@@ -15,6 +15,7 @@ type God struct {
 	args     []string
 	started  time.Time
 	stopping bool
+	exited   bool
 }
 
 func NewGod(name string, args []string) *God {
@@ -32,6 +33,7 @@ func (d *God) Start() {
 	}
 	d.cmd = cmd
 	d.started = time.Now()
+	d.exited = false
 	d.Watch()
 }
 
@@ -43,14 +45,17 @@ func (d *God) Watch() {
 	err := d.cmd.Wait()
 	if err == nil {
 		log.Println("Terminate without error")
+		d.exited = true
 		return
 	}
 
 	if d.stopping {
 		log.Printf("Stopping. Process %s exited with %v", d.name, err)
+		d.exited = true
 		return
 	}
 
+	d.exited = true
 	log.Printf("Command finished with error: %v", err)
 	if time.Now().Sub(d.started).Seconds() < MIMIMUM_AGE {
 		log.Printf("Program '%s' restart too fast. No restart!", d.name)
@@ -64,11 +69,7 @@ func (d *God) Restart() {
 		panic("You must call Start first")
 	}
 	log.Printf("Restart program %s", d.name)
-	// stopping race between goroutines
-	// should figure out how to solve with channel
-	d.stopping = true
 	d.Stop()
-	d.stopping = false
 	d.Start()
 }
 
@@ -76,16 +77,24 @@ func (d *God) Stop() {
 	if d.cmd == nil {
 		panic("You must call Start first")
 	}
+	if d.Exited() {
+		return
+	}
+	d.stopping = true
 	d.cmd.Process.Signal(syscall.SIGTERM)
-	// this is still bad, let see if we can fix with channel one day
 	d.waitExited()
+	d.stopping = false
+}
+
+func (d *God) Exited() bool {
+	return d.cmd.ProcessState != nil && d.exited
 }
 
 func (d *God) waitExited() {
 	for i := 0; i < 400; i++ {
-		if d.cmd.ProcessState != nil {
+		if d.Exited() {
 			return
 		}
-		time.Sleep(5 * time.Millisecond)
+		time.Sleep(30 * time.Millisecond)
 	}
 }
