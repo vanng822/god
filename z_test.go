@@ -140,3 +140,14 @@ func TestSignalOther(t *testing.T) {
 	assert.Equal(t, cmd.Process.Pid, z.gods[0].cmd.Process.Pid)
 	assert.NotNil(t, cmd.ProcessState)
 }
+
+func TestRecoverPanic(t *testing.T) {
+	args := os.Args[:]
+	defer func() {
+		os.Args = args
+	}()
+	os.Args = []string{"", "--pidfile", "testing.pid", "--pidclean", "-s", "sleep", "100", "-s", "./something"}
+	z := NewGoz()
+	z.Start()
+}
+

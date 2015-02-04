@@ -26,6 +26,19 @@ func (z *Goz) Add(d *God) {
 }
 
 func (z *Goz) Start() {
+	defer func() {
+		if r := recover(); r != nil {
+			// print error first
+			log.Println(r)
+			for _, d := range z.gods {
+				if !d.started.IsZero() {
+					log.Printf("Stopping '%s' before exit", d.name)
+					d.Stop()
+				}
+			}
+		}
+	}()
+
 	args := Args{}
 
 	if err := args.Parse(os.Args[1:]); err != nil || args.help || len(args.programs) == 0 {
