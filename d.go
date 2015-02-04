@@ -41,21 +41,22 @@ func (d *God) Watch() {
 	if d.cmd == nil {
 		panic("You must call Start first")
 	}
-	log.Printf("Waiting for command to finish...")
+	log.Printf("Waiting for command '%s' to finish...", d.name)
 	err := d.cmd.Wait()
 	if err == nil {
-		log.Println("Terminate without error")
+		log.Printf("Command '%s' terminate without error", d.name)
 		d.exited = true
 		return
 	}
 
 	if d.stopping {
-		log.Printf("Stopping. Process %s exited with %v", d.name, err)
+		log.Printf("Stopping. Command '%s' exited with %v", d.name, err)
 		d.exited = true
 		return
 	}
 
 	d.exited = true
+	log.Printf("Command '%s' finished with error: %v", d.name, err)
 	if time.Now().Sub(d.started).Seconds() < MIMIMUM_AGE {
 		log.Printf("Program '%s' restart too fast. No restart!", d.name)
 		return
