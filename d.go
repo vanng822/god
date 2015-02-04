@@ -56,7 +56,6 @@ func (d *God) Watch() {
 	}
 
 	d.exited = true
-	log.Printf("Command finished with error: %v", err)
 	if time.Now().Sub(d.started).Seconds() < MIMIMUM_AGE {
 		log.Printf("Program '%s' restart too fast. No restart!", d.name)
 		return

@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 	"os/signal"
-	"runtime"
 	"syscall"
 	"time"
 )
@@ -58,8 +57,6 @@ func (z *Goz) Start() {
 		z.Add(NewGod(p, pargs))
 	}
 
-	// need to handle panic and shut down others
-	log.Printf("Number of goroutines %d before start", runtime.NumGoroutine())
 	for _, d := range z.gods {
 		d.Start()
 	}
@@ -76,7 +73,6 @@ func (z *Goz) Start() {
 		}()
 	}
 
-	log.Printf("Number of goroutines %d after start", runtime.NumGoroutine())
 	z.sigc = make(chan os.Signal, 1)
 	signal.Notify(z.sigc, os.Kill, os.Interrupt, syscall.SIGTERM, syscall.SIGHUP)
 	for {
@@ -110,9 +106,7 @@ func (z *Goz) Stop() {
 }
 
 func (z *Goz) Restart() {
-	log.Printf("Number of goroutines %d before restart", runtime.NumGoroutine())
 	for _, d := range z.gods {
 		d.Restart()
 	}
-	log.Printf("Number of goroutines %d after restart", runtime.NumGoroutine())
 }
