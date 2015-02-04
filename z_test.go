@@ -121,3 +121,19 @@ func TestRecoverPanic(t *testing.T) {
 	})
 }
 
+
+func TestIntervalAutorestart(t *testing.T) {
+	MIMIMUM_AGE = 0.1
+	os.Args = []string{"", "--pidfile", "testing.pid", "--pidclean", "--interval", "2", "-s", "sleep", "1"}
+	z := NewGoz()
+	defer func() {
+		z.sigc <- syscall.SIGTERM
+		time.Sleep(200 * time.Millisecond)
+	}()
+	go z.Start()
+	time.Sleep(200 * time.Millisecond)
+	cmd := z.gods[0].cmd
+	assert.NotNil(t, cmd)
+	time.Sleep(2200 * time.Millisecond)
+	assert.NotEqual(t, cmd.Process.Pid, z.gods[0].cmd.Process.Pid)
+}

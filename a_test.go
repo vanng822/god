@@ -120,3 +120,11 @@ func TestArgsInvalidIntervalNoneIntValue(t *testing.T) {
 	assert.NotNil(t, err)
 	assert.Regexp(t, "Invalid interval value", err)
 }
+
+func TestArgsIntervalOK(t *testing.T) {
+	a := Args{}
+	args := []string{"--interval", "123"}
+	err := a.Parse(args)
+	assert.Nil(t, err)
+	assert.Equal(t, a.interval, 123)
+}
