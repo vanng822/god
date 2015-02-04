@@ -148,6 +148,8 @@ func TestRecoverPanic(t *testing.T) {
 	}()
 	os.Args = []string{"", "--pidfile", "testing.pid", "--pidclean", "-s", "sleep", "100", "-s", "./something"}
 	z := NewGoz()
-	z.Start()
+	assert.NotPanics(t, func() {
+		z.Start()
+	})
 }
 
