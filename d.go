@@ -65,9 +65,6 @@ func (d *God) Watch() {
 }
 
 func (d *God) Restart() {
-	if d.cmd == nil {
-		panic("You must call Start first")
-	}
 	log.Printf("Restart program %s", d.name)
 	d.Stop()
 	d.Start()
