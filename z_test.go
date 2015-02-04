@@ -9,10 +9,6 @@ import (
 )
 
 func TestUsage(t *testing.T) {
-	args := os.Args[:]
-	defer func() {
-		os.Args = args
-	}()
 	os.Args = []string{""}
 	z := NewGoz()
 	assert.NotNil(t, z)
@@ -21,10 +17,6 @@ func TestUsage(t *testing.T) {
 
 func TestStop(t *testing.T) {
 	MIMIMUM_AGE = 0.1
-	args := os.Args[:]
-	defer func() {
-		os.Args = args
-	}()
 	os.Args = []string{"", "--pidfile", "testing.pid", "--pidclean", "-s", "sleep", "10"}
 	z := NewGoz()
 	defer func() {
@@ -44,10 +36,6 @@ func TestStop(t *testing.T) {
 
 func TestRestart(t *testing.T) {
 	MIMIMUM_AGE = 0.1
-	args := os.Args[:]
-	defer func() {
-		os.Args = args
-	}()
 	os.Args = []string{"", "--pidfile", "testing.pid", "--pidclean", "-s", "sleep", "10"}
 	z := NewGoz()
 	defer func() {
@@ -67,10 +55,6 @@ func TestRestart(t *testing.T) {
 
 func TestSignalSigHup(t *testing.T) {
 	MIMIMUM_AGE = 0.1
-	args := os.Args[:]
-	defer func() {
-		os.Args = args
-	}()
 	os.Args = []string{"", "--pidfile", "testing.pid", "--pidclean", "-s", "sleep", "10"}
 	z := NewGoz()
 	defer func() {
@@ -89,10 +73,6 @@ func TestSignalSigHup(t *testing.T) {
 
 func TestSignalKill(t *testing.T) {
 	MIMIMUM_AGE = 0.1
-	args := os.Args[:]
-	defer func() {
-		os.Args = args
-	}()
 	os.Args = []string{"", "--pidfile", "testing.pid", "--pidclean", "-s", "sleep", "10"}
 	z := NewGoz()
 	go z.Start()
@@ -107,10 +87,6 @@ func TestSignalKill(t *testing.T) {
 
 func TestSignalInterrupt(t *testing.T) {
 	MIMIMUM_AGE = 0.1
-	args := os.Args[:]
-	defer func() {
-		os.Args = args
-	}()
 	os.Args = []string{"", "--pidfile", "testing.pid", "--pidclean", "-s", "sleep", "10"}
 	z := NewGoz()
 	go z.Start()
@@ -125,10 +101,6 @@ func TestSignalInterrupt(t *testing.T) {
 
 func TestSignalOther(t *testing.T) {
 	MIMIMUM_AGE = 0.1
-	args := os.Args[:]
-	defer func() {
-		os.Args = args
-	}()
 	os.Args = []string{"", "--pidfile", "testing.pid", "--pidclean", "-s", "sleep", "10"}
 	z := NewGoz()
 	go z.Start()
@@ -142,10 +114,6 @@ func TestSignalOther(t *testing.T) {
 }
 
 func TestRecoverPanic(t *testing.T) {
-	args := os.Args[:]
-	defer func() {
-		os.Args = args
-	}()
 	os.Args = []string{"", "--pidfile", "testing.pid", "--pidclean", "-s", "sleep", "100", "-s", "./something"}
 	z := NewGoz()
 	assert.NotPanics(t, func() {
