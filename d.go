@@ -34,7 +34,7 @@ func (d *God) Start() {
 	d.cmd = cmd
 	d.started = time.Now()
 	d.exited = false
-	d.Watch()
+	go d.Watch()
 }
 
 func (d *God) Watch() {

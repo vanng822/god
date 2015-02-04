@@ -48,7 +48,7 @@ func (z *Goz) Start() {
 	// need to handle panic and shut down others
 	log.Printf("Number of goroutines %d before start", runtime.NumGoroutine())
 	for _, d := range z.gods {
-		go d.Start()
+		d.Start()
 	}
 
 	if float64(args.interval) > MIMIMUM_AGE {
@@ -99,7 +99,7 @@ func (z *Goz) Stop() {
 func (z *Goz) Restart() {
 	log.Printf("Number of goroutines %d before restart", runtime.NumGoroutine())
 	for _, d := range z.gods {
-		go d.Restart()
+		d.Restart()
 	}
 	log.Printf("Number of goroutines %d after restart", runtime.NumGoroutine())
 }

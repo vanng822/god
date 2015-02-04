@@ -11,11 +11,13 @@ func TestGod(t *testing.T) {
 	assert.Equal(t, "ls", d.name)
 	assert.Equal(t, []string{"-l"}, d.args)
 	d.Start()
+	time.Sleep(200 * time.Millisecond)
 	pid := d.cmd.Process.Pid
 	started := d.started
 	assert.NotEmpty(t, pid)
 	assert.True(t, d.cmd.ProcessState.Exited())
 	d.Restart()
+	time.Sleep(200 * time.Millisecond)
 	// new pid
 	assert.NotEqual(t, pid, d.cmd.Process.Pid)
 	assert.True(t, d.cmd.ProcessState.Exited())
@@ -36,10 +38,10 @@ func TestGodPanic(t *testing.T) {
 func TestGodRestartWhileRunning(t *testing.T) {
 	d := NewGod("sleep", []string{"10"})
 	MIMIMUM_AGE = 0.1
-	go d.Start()
+	d.Start()
 	time.Sleep(200 * time.Millisecond)
 	pid := d.cmd.Process.Pid
-	go d.Restart()
+	d.Restart()
 	time.Sleep(100 * time.Millisecond)
 	assert.NotEqual(t, pid, d.cmd.Process.Pid)
 	d.stopping = true
@@ -49,7 +51,7 @@ func TestGodRestartWhileRunning(t *testing.T) {
 func TestGodRestartKill(t *testing.T) {
 	d := NewGod("sleep", []string{"10"})
 	MIMIMUM_AGE = 0.1
-	go d.Start()
+	d.Start()
 	time.Sleep(200 * time.Millisecond)
 	pid := d.cmd.Process.Pid
 	d.cmd.Process.Kill()
