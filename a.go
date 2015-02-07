@@ -8,16 +8,16 @@ import (
 
 func usage() {
 	fmt.Printf(`
-Usage: go run daemonize.go --pidfile daemonize.pid --pidclean --interval 86400 -s program args ...
+Usage: god --pidfile daemonize.pid --pidclean --interval 86400 -s program args ...
 	--pidfile   A pidfile which process id will be stored.
 	--pidclean  Clean old pidfile if there is one and try to run this program
 	--interval  Number of seconds to restart all programs, given in integer. Minimum is %.0f seconds
 	-s          Program you want to run in background. Can repeat for multiple daemons
 	args        Other arguments that you want to pass to daemons
 	
-"go run daemonize.go" is your daemonize program. See example/main.go at https://github.com/vanng822/god
+	god --version For printing out version
 
-Example: go run example/main.go --pidfile god.pid -s ./example/test_bin -p 8080` + "\n", MIMIMUM_AGE)
+Example: god --pidfile god.pid -s sleep 10` + "\n", MIMIMUM_AGE)
 }
 
 type Args struct {
