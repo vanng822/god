@@ -5,6 +5,8 @@ import (
 	"os/exec"
 	"syscall"
 	"time"
+	"os"
+	"fmt"
 )
 
 var MIMIMUM_AGE = 2.0
@@ -78,11 +80,11 @@ func (d *God) Stop() {
 		return
 	}
 	d.stopping = true
-	d.cmd.Process.Signal(syscall.SIGTERM)
+	d.Signal(syscall.SIGTERM)
 	d.waitExited()
 	// if not exited with SIGTERM we force with SIGKILL
 	if !d.Exited() {
-		d.cmd.Process.Signal(syscall.SIGKILL)
+		d.Signal(syscall.SIGKILL)
 		d.waitExited()
 	}
 	d.stopping = false
@@ -90,6 +92,13 @@ func (d *God) Stop() {
 
 func (d *God) Exited() bool {
 	return d.cmd.ProcessState != nil && d.exited
+}
+
+func (d *God) Signal(s os.Signal) error {
+	if d.cmd == nil {
+		return fmt.Errorf("You must call Start first")
+	}
+	return d.cmd.Process.Signal(s)
 }
 
 func (d *God) waitExited() {
