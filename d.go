@@ -1,4 +1,4 @@
-package god
+package main
 
 import (
 	"log"

@@ -7,7 +7,7 @@
 //		z := god.NewGoz()
 //		z.Start()
 //	}
-package god
+package main
 
 import (
 
