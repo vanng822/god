@@ -4,19 +4,13 @@ Keep an eye on some process running
 
 # Usage
 	
-### main.go
-
-	import (
-		"github.com/vanng822/god"
-	)
-	func main() {
-		z := god.NewGoz()
-		z.Start()
-	}
+### build
+	
+	go build
 	
 ### run
 
-	>> go run main.go --pidfile example.pid -s ./example/test_bin  -p 8080 -c config.conf
+	>> ./god --pidfile example.pid -s ./example/test_bin  -p 8080 -c config.conf
 	
 ### restart
 
