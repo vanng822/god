@@ -74,7 +74,13 @@ func (z *Goz) Start() {
 	}
 
 	z.sigc = make(chan os.Signal, 1)
-	signal.Notify(z.sigc, os.Kill, os.Interrupt, syscall.SIGTERM, syscall.SIGHUP)
+	// stop
+	signals := []os.Signal{os.Kill, os.Interrupt, syscall.SIGTERM}
+	// restart
+	signals = append(signals, syscall.SIGHUP)
+	// generic signal to send to processes
+	signals = append(signals, syscall.SIGUSR1, syscall.SIGUSR2)
+	signal.Notify(z.sigc, signals...)
 	for {
 		sig := <-z.sigc
 		log.Printf("Got signal %v", sig)
@@ -91,11 +97,21 @@ func (z *Goz) Start() {
 		case os.Interrupt:
 			z.Stop()
 			return
+		case syscall.SIGUSR1:
+			z.Signal(sig)
+		case syscall.SIGUSR2:
+			z.Signal(sig)
 		default:
 			log.Printf("Unhandled signal %v, stop program", sig)
 			z.Stop()
 			return
 		}
+	}
+}
+
+func (z *Goz) Signal(s os.Signal) {
+	for _, d := range z.gods {
+		d.Signal(s)
 	}
 }
 

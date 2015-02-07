@@ -137,3 +137,24 @@ func TestIntervalAutorestart(t *testing.T) {
 	time.Sleep(2200 * time.Millisecond)
 	assert.NotEqual(t, cmd.Process.Pid, z.gods[0].cmd.Process.Pid)
 }
+
+func TestSignal(t *testing.T) {
+	MIMIMUM_AGE = 0.1
+	os.Args = []string{"", "--pidfile", "testing.pid", "--pidclean", "-s", "sleep", "5"}
+	z := NewGoz()
+	defer func() {
+		z.sigc <- syscall.SIGTERM
+		time.Sleep(200 * time.Millisecond)
+	}()
+	go z.Start()
+	time.Sleep(200 * time.Millisecond)
+	cmd := z.gods[0].cmd
+	assert.NotNil(t, cmd)
+	z.sigc <- syscall.SIGUSR1
+	time.Sleep(200 * time.Millisecond)
+	assert.NotEqual(t, cmd.Process.Pid, z.gods[0].cmd.Process.Pid)
+	cmd = z.gods[0].cmd
+	z.sigc <- syscall.SIGUSR2
+	time.Sleep(200 * time.Millisecond)
+	assert.NotEqual(t, cmd.Process.Pid, z.gods[0].cmd.Process.Pid)
+}
