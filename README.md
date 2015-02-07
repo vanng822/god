@@ -10,8 +10,13 @@ Keep an eye on some process running
 	
 ### run
 
-	>> ./god --pidfile example.pid -s ./example/test_bin  -p 8080 -c config.conf
+	>> ./god --pidfile god.pid -s go run test_program/test_bin.go
+
+### Check test_bin.go working
 	
+	//Open in browser
+	http://127.0.0.1:8080/
+
 ### restart
 
 	>> kill -s HUP $(cat example.pid)
