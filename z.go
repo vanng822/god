@@ -40,7 +40,17 @@ func (z *Goz) Start() {
 
 	args := Args{}
 
-	if err := args.Parse(os.Args[1:]); err != nil || args.help || len(args.programs) == 0 {
+	if err := args.Parse(os.Args[1:]); err != nil {
+		usage()
+		return
+	}
+	
+	if args.version {
+		version()
+		return	
+	}
+	
+	if args.help || len(args.programs) == 0 {
 		usage()
 		return
 	}

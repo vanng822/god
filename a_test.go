@@ -20,6 +20,12 @@ func TestArgsHelp(t *testing.T) {
 	assert.True(t, a.help)
 }
 
+func TestArgsVersion(t *testing.T) {
+	a := Args{}
+	assert.Nil(t, a.Parse([]string{"--version"}))
+	assert.True(t, a.version)
+}
+
 func TestArgsOneProgram(t *testing.T) {
 	a := Args{}
 	

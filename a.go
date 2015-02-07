@@ -2,13 +2,12 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"strconv"
 	"strings"
 )
 
 func usage() {
-	log.Printf(`
+	fmt.Printf(`
 Usage: go run daemonize.go --pidfile daemonize.pid --pidclean --interval 86400 -s program args ...
 	--pidfile   A pidfile which process id will be stored.
 	--pidclean  Clean old pidfile if there is one and try to run this program
@@ -18,8 +17,7 @@ Usage: go run daemonize.go --pidfile daemonize.pid --pidclean --interval 86400 -
 	
 "go run daemonize.go" is your daemonize program. See example/main.go at https://github.com/vanng822/god
 
-Example: go run example/main.go --pidfile god.pid -s ./example/test_bin -p 8080
-	`, MIMIMUM_AGE)
+Example: go run example/main.go --pidfile god.pid -s ./example/test_bin -p 8080` + "\n", MIMIMUM_AGE)
 }
 
 type Args struct {
@@ -29,6 +27,7 @@ type Args struct {
 	programs    []string
 	programArgs [][]string
 	help        bool
+	version     bool
 	interval    int
 }
 
@@ -37,6 +36,10 @@ func (a *Args) Parse(args []string) error {
 	for i := 0; i < max; i++ {
 		if args[i] == "--help" {
 			a.help = true
+			return nil
+		}
+		if args[i] == "--version" {
+			a.version = true
 			return nil
 		}
 		if args[i] == "--pidfile" {
