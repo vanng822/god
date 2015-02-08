@@ -97,21 +97,12 @@ func (z *Goz) Start() {
 		switch sig {
 		case syscall.SIGHUP:
 			z.Restart()
-		case syscall.SIGTERM:
-			z.Stop()
-			return
-		case os.Kill:
-			z.Stop()
-			return
-		case os.Interrupt:
-			z.Stop()
-			return
 		case syscall.SIGUSR1:
 			z.Signal(sig)
 		case syscall.SIGUSR2:
 			z.Signal(sig)
 		default:
-			log.Printf("Unhandled signal %v, stop program", sig)
+			log.Println("Stop program")
 			z.Stop()
 			return
 		}
