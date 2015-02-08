@@ -97,7 +97,6 @@ func (z *Goz) Start() {
 		switch sig {
 		case syscall.SIGHUP:
 			z.Restart()
-			break
 		case syscall.SIGTERM:
 			z.Stop()
 			return
