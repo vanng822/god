@@ -19,8 +19,8 @@ Keep an eye on some process running
 
 ### restart
 
-	>> kill -s HUP $(cat example.pid)
+	>> kill -s HUP $(cat god.pid)
 	
 ### stop
 	
-	>> kill $(cat example.pid)
+	>> kill $(cat god.pid)

@@ -10,8 +10,9 @@ import (
 )
 
 type Goz struct {
-	gods []*God
-	sigc chan os.Signal
+	gods   []*God
+	sigc   chan os.Signal
+	ticker *time.Ticker
 }
 
 func NewGoz() *Goz {
@@ -44,12 +45,12 @@ func (z *Goz) Start() {
 		usage()
 		return
 	}
-	
+
 	if args.version {
 		version()
-		return	
+		return
 	}
-	
+
 	if args.help || len(args.programs) == 0 {
 		usage()
 		return
@@ -71,17 +72,7 @@ func (z *Goz) Start() {
 		d.Start()
 	}
 
-	if float64(args.interval) > MIMIMUM_AGE {
-		ticker := time.NewTicker(time.Duration(args.interval) * time.Second)
-		go func() {
-			for {
-				select {
-				case <-ticker.C:
-					z.Restart()
-				}
-			}
-		}()
-	}
+	z.startInterval(args.interval)
 
 	z.sigc = make(chan os.Signal, 1)
 	// stop
@@ -97,6 +88,7 @@ func (z *Goz) Start() {
 		switch sig {
 		case syscall.SIGHUP:
 			z.Restart()
+			z.startInterval(args.interval)
 		case syscall.SIGUSR1:
 			z.Signal(sig)
 		case syscall.SIGUSR2:
@@ -107,6 +99,28 @@ func (z *Goz) Start() {
 			return
 		}
 	}
+}
+
+func (z *Goz) stopInterval() {
+	if z.ticker != nil {
+		z.ticker.Stop()
+	}
+}
+
+func (z *Goz) startInterval(secs int) {
+	if float64(secs) <= MIMIMUM_AGE {
+		return
+	}
+	z.stopInterval()
+	z.ticker = time.NewTicker(time.Duration(secs) * time.Second)
+	go func() {
+		for {
+			select {
+			case <-z.ticker.C:
+				z.Restart()
+			}
+		}
+	}()
 }
 
 func (z *Goz) Signal(s os.Signal) {
