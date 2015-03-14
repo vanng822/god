@@ -1,6 +1,6 @@
 # god
 
-Keep an eye on some process running
+Keep an eye on some process running. God will restart your program if it exits unexpected. This is helpful when you don't have time 24/7 to watch over your applications. It restarts program on SIGHUP and forward SIGUSR1 and SIGUSR2.
 
 # Usage
 	
