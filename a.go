@@ -90,13 +90,17 @@ func findProgramArgs(args []string, start int) []string {
 	var pargs []string
 	max := len(args)
 	for n := start; n < max; n++ {
-		if !isArgValue(args[n]) {
+		if isNextProgram(args[n]) {
 			break
 		}
 		pargs = append(pargs, args[n])
 	}
 
 	return pargs
+}
+
+func isNextProgram(arg string) bool {
+	return arg == "-s"
 }
 
 func isArgValue(value string) bool {

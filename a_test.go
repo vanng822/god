@@ -35,7 +35,7 @@ func TestArgsOneProgram(t *testing.T) {
 	assert.Nil(t, a.Parse(args))
 	assert.Equal(t, "test.pid", a.pidFile)
 	assert.True(t, a.force)
-	assert.Equal(t, []string{"-p", "8080"}, a.args)
+	assert.Nil(t, a.args)
 	assert.Equal(t, []string{"./example/test_bin"}, a.programs)
 }
 
@@ -48,7 +48,7 @@ func TestArgsMultipleProgram(t *testing.T) {
 	assert.Nil(t, a.Parse(args))
 	assert.Equal(t, "test.pid", a.pidFile)
 	assert.True(t, a.force)
-	assert.Equal(t, []string{"-p", "8080"}, a.args)
+	assert.Nil(t, a.args)
 	assert.Equal(t, []string{"./example/test_bin", "./example/test_bin2"}, a.programs)
 }
 
@@ -62,9 +62,9 @@ func TestArgsMultipleProgramArgs(t *testing.T) {
 	assert.Nil(t, a.Parse(args))
 	assert.Equal(t, "test.pid", a.pidFile)
 	assert.True(t, a.force)
-	assert.Equal(t, []string{"-p", "8080"}, a.args)
+	assert.Nil(t, a.args)
 	assert.Equal(t, []string{"sleep", "node"}, a.programs)
-	assert.Equal(t, [][]string{{"10"}, {"server.js"}}, a.programArgs)
+	assert.Equal(t, [][]string{{"10"}, {"server.js", "-p", "8080"}}, a.programArgs)
 }
 
 func TestArgsInvalidProgram(t *testing.T) {
