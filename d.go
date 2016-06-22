@@ -1,12 +1,13 @@
 package main
 
 import (
+	"fmt"
+	"io"
 	"log"
+	"os"
 	"os/exec"
 	"syscall"
 	"time"
-	"os"
-	"fmt"
 )
 
 var MIMIMUM_AGE = 2.0
@@ -29,7 +30,20 @@ func NewGod(name string, args []string) *God {
 
 func (d *God) Start() {
 	cmd := exec.Command(d.name, d.args...)
-	err := cmd.Start()
+
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		panic(err)
+	}
+	stderr, err := cmd.StderrPipe()
+	if err != nil {
+		panic(err)
+	}
+
+	go io.Copy(os.Stdout, stdout)
+	go io.Copy(os.Stderr, stderr)
+
+	err = cmd.Start()
 	if err != nil {
 		panic(err)
 	}
