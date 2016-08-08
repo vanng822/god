@@ -2,11 +2,39 @@ package main
 
 import (
 	"log"
+	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/fsnotify/fsnotify"
 )
+
+func scan(path string) ([]string, error) {
+	var folders []string
+	folder, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	files, err := folder.Readdir(-1)
+	if err != nil {
+		panic(err)
+	}
+	for _, fi := range files {
+		// skip all dot files/folders
+		if fi.Name()[0] == '.' {
+			continue
+		}
+		if fi.IsDir() {
+			folders = append(folders, path+"/"+fi.Name())
+			subfolder, err := scan(path + "/" + fi.Name())
+			if err != nil {
+				panic(err)
+			}
+			folders = append(folders, subfolder...)
+		}
+	}
+	return folders, nil
+}
 
 func watchDirs(dirs, exts string, restart chan bool) {
 	watcher, err := fsnotify.NewWatcher()
@@ -20,7 +48,6 @@ func watchDirs(dirs, exts string, restart chan bool) {
 	}
 
 	allDirs := strings.Split(dirs, ",")
-	log.Println("Watching dirs:", allDirs)
 	for _, dd := range allDirs {
 		path, err := filepath.Abs(dd)
 		if err != nil {
@@ -29,6 +56,16 @@ func watchDirs(dirs, exts string, restart chan bool) {
 		err = watcher.Add(path)
 		if err != nil {
 			log.Fatal(err)
+		}
+		folders, err := scan(path)
+		if err != nil {
+			log.Fatal(err)
+		}
+		for _, f := range folders {
+			err = watcher.Add(f)
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 	}
 	allExts := strings.Split(exts, ",")
@@ -41,7 +78,6 @@ func watchDirs(dirs, exts string, restart chan bool) {
 				for _, ext := range allExts {
 					if strings.HasSuffix(event.Name, ext) {
 						shouldRestart = true
-						log.Println("modified file:", event.Name, exts)
 						restart <- shouldRestart
 						break
 					}
