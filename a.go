@@ -12,23 +12,29 @@ Usage: god --pidfile daemonize.pid --pidclean --interval 86400 -s program args .
 	--pidfile   A pidfile which process id will be stored.
 	--pidclean  Clean old pidfile if there is one and try to run this program
 	--interval  Number of seconds to restart all programs, given in integer. Minimum is %.0f seconds
-	-s          Program you want to run in background. Can repeat for multiple daemons
+	--watch dirs to watch file changes
+ 	--watch-exts file extenstions to watch
+	-s program [args]   Program you want to run in background. Can repeat for multiple daemons
 	args        Other arguments that you want to pass to daemons
-	
+
 	god --version For printing out version
 
-Example: god --pidfile god.pid -s sleep 10` + "\n", MIMIMUM_AGE)
+Example: god --pidfile god.pid -s sleep 10`+"\n", MIMIMUM_AGE)
 }
 
 type Args struct {
-	args        []string
-	pidFile     string
-	force       bool
-	programs    []string
-	programArgs [][]string
-	help        bool
-	version     bool
-	interval    int
+	args            []string
+	pidFile         string
+	force           bool
+	programs        []string
+	programArgs     [][]string
+	help            bool
+	version         bool
+	interval        int
+	fileWatched     bool
+	fileWatchedDirs string
+	fileWatchedExts string
+	fileWatchedDone chan bool
 }
 
 func (a *Args) Parse(args []string) error {
@@ -65,6 +71,19 @@ func (a *Args) Parse(args []string) error {
 			a.interval = interval
 			continue
 		}
+		if args[i] == "--watch" {
+			a.fileWatched = true
+			i++
+			a.fileWatchedDirs = args[i]
+			continue
+		}
+		if args[i] == "--watch-exts" {
+			a.fileWatched = true
+			i++
+			a.fileWatchedExts = args[i]
+			continue
+		}
+
 		if args[i] == "-s" {
 			i++
 			if i >= max || !isArgValue(args[i]) {

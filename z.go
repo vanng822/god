@@ -1,12 +1,13 @@
 package main
 
 import (
-	"github.com/vanng822/gopid"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/vanng822/gopid"
 )
 
 type Goz struct {
@@ -70,6 +71,22 @@ func (z *Goz) Start() {
 
 	for _, d := range z.gods {
 		d.Start()
+	}
+
+	if args.fileWatched {
+		go func() {
+			shouldRestart := make(chan bool)
+			go watchDirs(args.fileWatchedDirs, args.fileWatchedExts, shouldRestart)
+			for {
+				select {
+				case restart := <-shouldRestart:
+					if restart {
+						time.Sleep(3 * time.Second)
+						z.Restart()
+					}
+				}
+			}
+		}()
 	}
 
 	z.startInterval(args.interval)
