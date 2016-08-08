@@ -11,6 +11,7 @@ env:
 install:
  - go get github.com/vanng822/gopid 
  - go get github.com/stretchr/testify/assert
+ - go get github.com/fsnotify/fsnotify
 
 script:
   - go test -v 
