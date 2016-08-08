@@ -29,6 +29,7 @@ func NewGod(name string, args []string) *God {
 }
 
 func (d *God) Start() {
+	log.Printf("Start command '%s' ...", d.name)
 	cmd := exec.Command(d.name, d.args...)
 
 	stdout, err := cmd.StdoutPipe()
