@@ -96,11 +96,11 @@ func (d *God) Stop() {
 	}
 	d.stopping = true
 	d.Signal(syscall.SIGTERM)
-	d.waitExited()
+	d.waitExited(60 * time.Second)
 	// if not exited with SIGTERM we force with SIGKILL
 	if !d.Exited() {
 		d.Signal(syscall.SIGKILL)
-		d.waitExited()
+		d.waitExited(120 * time.Second)
 	}
 	d.stopping = false
 }
@@ -116,11 +116,18 @@ func (d *God) Signal(s os.Signal) error {
 	return d.cmd.Process.Signal(s)
 }
 
-func (d *God) waitExited() {
-	for i := 0; i < 400; i++ {
-		if d.Exited() {
+func (d *God) waitExited(maxSecs time.Duration) {
+	ticker := time.Tick(maxSecs)
+	for {
+		select {
+		case <-ticker:
 			return
+		default:
+			if d.Exited() {
+				return
+			}
+			time.Sleep(30 * time.Millisecond)
 		}
-		time.Sleep(30 * time.Millisecond)
 	}
+
 }
