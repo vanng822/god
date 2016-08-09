@@ -53,8 +53,7 @@ func watchDirs(dirs, exts string, restart chan bool) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		err = watcher.Add(path)
-		if err != nil {
+		if err = watcher.Add(path); err != nil {
 			log.Fatal(err)
 		}
 		folders, err := scan(path)
@@ -62,14 +61,13 @@ func watchDirs(dirs, exts string, restart chan bool) {
 			log.Fatal(err)
 		}
 		for _, f := range folders {
-			err = watcher.Add(f)
-			if err != nil {
+			if err = watcher.Add(f); err != nil {
 				log.Fatal(err)
 			}
 		}
 	}
 	allExts := strings.Split(exts, ",")
-	var shouldRestart bool
+
 	for {
 		select {
 		case event := <-watcher.Events:
@@ -77,8 +75,7 @@ func watchDirs(dirs, exts string, restart chan bool) {
 			if event.Op&fsnotify.Write == fsnotify.Write {
 				for _, ext := range allExts {
 					if strings.HasSuffix(event.Name, ext) {
-						shouldRestart = true
-						restart <- shouldRestart
+						restart <- true
 						break
 					}
 				}
