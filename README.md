@@ -14,15 +14,17 @@ Be aware this may not work well if you program fork another process, special in 
 
 	>> ./god --pidfile god.pid -s go run test_program/test_bin.go
 
-### run in watch mode, for a go program, ie don't run "go run"
-
-	>> ./god --watch folder1,folder2 --watch-exts go,json --pidfile god.pid -s make build-go-program
-	>> ./god --watch touchfolder --watch-exts touch --pidfile god.pid -s /path/to/go-program
-
 ### Check test_bin.go working
 	
 	//Open in browser
 	http://127.0.0.1:8080/
+	
+	
+### run in watch mode, for a go program, ie don't run "go run"
+
+	>> ./god --watch folder1,folder2 --watch-exts go,json --pidfile god.pid -s make build-go-program
+	>> ./god --watch touchfolder --watch-exts touch --pidfile god2.pid -s /path/to/go-program
+
 
 ### restart
 
