@@ -12,8 +12,8 @@ Usage: god --pidfile daemonize.pid --pidclean --interval 86400 -s program args .
 	--pidfile   A pidfile which process id will be stored.
 	--pidclean  Clean old pidfile if there is one and try to run this program
 	--interval  Number of seconds to restart all programs, given in integer. Minimum is %.0f seconds
-	--watch dirs to watch file changes
- 	--watch-exts file extenstions to watch
+	--watch 		dirs to watch for file changes
+ 	--watch-exts file extenstions to watch, default by watching all extenstions
 	-s program [args]   Program you want to run in background. Can repeat for multiple daemons
 	args        Other arguments that you want to pass to daemons
 
