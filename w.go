@@ -15,6 +15,7 @@ func scan(path string) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer folder.Close()
 	files, err := folder.Readdir(-1)
 	if err != nil {
 		panic(err)
