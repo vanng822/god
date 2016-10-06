@@ -63,6 +63,22 @@ func (z *Goz) Start() {
 		defer gopid.CleanPid(args.pidFile)
 	}
 
+	if args.logFile != "" {
+		logwritter, err := os.OpenFile(args.logFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
+		if err != nil {
+			panic(err)
+		}
+		os.Stdout = logwritter
+	}
+
+	if args.logFileErr != "" {
+		errlogwritter, err := os.OpenFile(args.logFileErr, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
+		if err != nil {
+			panic(err)
+		}
+		os.Stderr = errlogwritter
+	}
+
 	for i, p := range args.programs {
 		pargs := args.programArgs[i]
 		pargs = append(pargs, args.args...)

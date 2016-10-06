@@ -25,6 +25,8 @@ Example: god --pidfile god.pid -s sleep 10`+"\n", MIMIMUM_AGE)
 type Args struct {
 	args            []string
 	pidFile         string
+	logFile         string
+	logFileErr      string
 	force           bool
 	programs        []string
 	programArgs     [][]string
@@ -81,6 +83,18 @@ func (a *Args) Parse(args []string) error {
 			a.fileWatched = true
 			i++
 			a.fileWatchedExts = args[i]
+			continue
+		}
+
+		if args[i] == "--log" {
+			i++
+			a.logFile = args[i]
+			continue
+		}
+
+		if args[i] == "--log-err" {
+			i++
+			a.logFileErr = args[i]
 			continue
 		}
 
