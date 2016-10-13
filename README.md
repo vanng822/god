@@ -2,7 +2,7 @@
 
 Keep an eye on some process running. God will restart your program if it exits unexpected. This is helpful when you don't have time 24/7 to watch over your applications. It restarts program on SIGHUP and forward SIGUSR1 and SIGUSR2.
 
-Be aware this may not work well if you program fork another process, special in watch mode.
+Be aware this may not work well if your program forks another process, special in watch mode.
 
 # Usage
 	
