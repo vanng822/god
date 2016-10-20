@@ -14,6 +14,8 @@ Usage: god --pidfile daemonize.pid --pidclean --interval 86400 -s program args .
 	--interval  Number of seconds to restart all programs, given in integer. Minimum is %.0f seconds
 	--watch 		dirs to watch for file changes
  	--watch-exts file extenstions to watch, default by watching all extenstions
+	--log	Log filename, output from stdout of child process
+	--log-err Log filename for errors, output from stderr of child process
 	-s program [args]   Program you want to run in background. Can repeat for multiple daemons
 	args        Other arguments that you want to pass to daemons
 
