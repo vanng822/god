@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestArgsEmpty(t *testing.T) {
@@ -28,7 +29,7 @@ func TestArgsVersion(t *testing.T) {
 
 func TestArgsOneProgram(t *testing.T) {
 	a := Args{}
-	
+
 	args := []string{"--pidfile", "test.pid", "--pidclean",
 		"-s", "./example/test_bin", "-p", "8080"}
 
@@ -69,7 +70,7 @@ func TestArgsMultipleProgramArgs(t *testing.T) {
 
 func TestArgsInvalidProgram(t *testing.T) {
 	a := Args{}
-	
+
 	args := []string{"--pidfile", "test.pid", "--pidclean", "-s", "-p", "8080"}
 	err := a.Parse(args)
 	assert.NotNil(t, err)
@@ -78,7 +79,7 @@ func TestArgsInvalidProgram(t *testing.T) {
 
 func TestArgsInvalidNoProgram(t *testing.T) {
 	a := Args{}
-	
+
 	args := []string{"--pidfile", "test.pid", "--pidclean", "-s"}
 	err := a.Parse(args)
 	assert.NotNil(t, err)
@@ -87,7 +88,7 @@ func TestArgsInvalidNoProgram(t *testing.T) {
 
 func TestArgsInvalidPidfile(t *testing.T) {
 	a := Args{}
-	
+
 	args := []string{"--pidfile", "--pidclean"}
 	err := a.Parse(args)
 	assert.NotNil(t, err)
@@ -96,7 +97,7 @@ func TestArgsInvalidPidfile(t *testing.T) {
 
 func TestArgsInvalidNoPidfile(t *testing.T) {
 	a := Args{}
-	
+
 	args := []string{"--pidclean", "--pidfile"}
 	err := a.Parse(args)
 	assert.NotNil(t, err)
@@ -133,4 +134,20 @@ func TestArgsIntervalOK(t *testing.T) {
 	err := a.Parse(args)
 	assert.Nil(t, err)
 	assert.Equal(t, a.interval, 123)
+}
+
+func TestArgsLogOK(t *testing.T) {
+	a := Args{}
+	args := []string{"--log", "testing.log"}
+	err := a.Parse(args)
+	assert.Nil(t, err)
+	assert.Equal(t, a.logFile, "testing.log")
+}
+
+func TestArgsLogErrOK(t *testing.T) {
+	a := Args{}
+	args := []string{"--log-err", "err.log"}
+	err := a.Parse(args)
+	assert.Nil(t, err)
+	assert.Equal(t, a.logFileErr, "err.log")
 }
