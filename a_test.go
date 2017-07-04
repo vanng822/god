@@ -181,5 +181,4 @@ func TestArgsDelayError(t *testing.T) {
 	args := []string{"--delay", "werr"}
 	err := a.Parse(args)
 	assert.NotNil(t, err)
-	assert.Regexp(t, "Atoi", err)
 }
