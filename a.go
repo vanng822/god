@@ -14,6 +14,7 @@ Usage: god --pidfile daemonize.pid --pidclean --interval 86400 -s program args .
 	--interval  Number of seconds to restart all programs, given in integer. Minimum is %.0f seconds
 	--watch 		dirs to watch for file changes
  	--watch-exts file extenstions to watch, default by watching all extenstions
+	--delay number of seconds to countdown before restarting the program when any file is changed
 	--log	Log filename, output from stdout of child process
 	--log-err Log filename for errors, output from stderr of child process
 	-s program [args]   Program you want to run in background. Can repeat for multiple daemons
@@ -38,11 +39,13 @@ type Args struct {
 	fileWatched     bool
 	fileWatchedDirs string
 	fileWatchedExts string
+	delaySecs       int
 	fileWatchedDone chan bool
 }
 
 func (a *Args) Parse(args []string) error {
 	max := len(args)
+	a.delaySecs = 3
 	for i := 0; i < max; i++ {
 		if args[i] == "--help" {
 			a.help = true
@@ -85,6 +88,16 @@ func (a *Args) Parse(args []string) error {
 			a.fileWatched = true
 			i++
 			a.fileWatchedExts = args[i]
+			continue
+		}
+
+		if args[i] == "--delay" {
+			i++
+			delay, err := strconv.Atoi(args[i])
+			if err != nil {
+				return err
+			}
+			a.delaySecs = delay
 			continue
 		}
 

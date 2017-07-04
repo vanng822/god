@@ -151,3 +151,35 @@ func TestArgsLogErrOK(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, a.logFileErr, "err.log")
 }
+
+func TestArgsWatch(t *testing.T) {
+	a := Args{}
+	args := []string{"--watch", "tests,testing"}
+	err := a.Parse(args)
+	assert.Nil(t, err)
+	assert.Equal(t, a.fileWatchedDirs, "tests,testing")
+}
+
+func TestArgsWatchExts(t *testing.T) {
+	a := Args{}
+	args := []string{"--watch-exts", ".json"}
+	err := a.Parse(args)
+	assert.Nil(t, err)
+	assert.Equal(t, a.fileWatchedExts, ".json")
+}
+
+func TestArgsDelayOK(t *testing.T) {
+	a := Args{}
+	args := []string{"--delay", "100"}
+	err := a.Parse(args)
+	assert.Nil(t, err)
+	assert.Equal(t, a.delaySecs, 100)
+}
+
+func TestArgsDelayError(t *testing.T) {
+	a := Args{}
+	args := []string{"--delay", "werr"}
+	err := a.Parse(args)
+	assert.NotNil(t, err)
+	assert.Regexp(t, "Atoi", err)
+}

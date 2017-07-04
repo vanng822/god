@@ -91,14 +91,16 @@ func (z *Goz) Start() {
 
 	if args.fileWatched {
 		go func() {
+			restartTimer := time.NewTimer(24 * 365 * 10 * time.Hour)
 			shouldRestart := make(chan bool)
 			go watchDirs(args.fileWatchedDirs, args.fileWatchedExts, shouldRestart)
 			for {
 				select {
+				case <-restartTimer.C:
+					z.Restart()
 				case restart := <-shouldRestart:
 					if restart {
-						time.Sleep(3 * time.Second)
-						z.Restart()
+						restartTimer.Reset(time.Duration(1000 * 1000 * 1000 * args.delaySecs))
 					}
 				}
 			}
