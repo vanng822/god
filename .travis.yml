@@ -1,7 +1,10 @@
 language: golang
 
 go:
-  - 1.4
+  - 1.8
+  - 1.7
+  - 1.6
+  - 1.5
 
 env:
   global:
@@ -9,9 +12,9 @@ env:
   - PATH="$HOME/gopath/bin:$HOME/bin:$PATH"
 
 install:
- - go get github.com/vanng822/gopid 
+ - go get github.com/vanng822/gopid
  - go get github.com/stretchr/testify/assert
  - go get github.com/fsnotify/fsnotify
 
 script:
-  - go test -v 
+  - go test -v
