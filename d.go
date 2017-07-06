@@ -60,19 +60,16 @@ func (d *God) Watch() {
 	}
 	log.Printf("Waiting for command '%s' to finish...", d.name)
 	err := d.cmd.Wait()
+	d.exited = true
 	if err == nil {
 		log.Printf("Command '%s' terminate without error", d.name)
-		d.exited = true
 		return
 	}
 
 	if d.stopping {
 		log.Printf("Stopping. Command '%s' exited with %v", d.name, err)
-		d.exited = true
 		return
 	}
-
-	d.exited = true
 	log.Printf("Command '%s' finished with error: %v", d.name, err)
 	if time.Now().Sub(d.started).Seconds() < MIMIMUM_AGE {
 		log.Printf("Program '%s' restart too fast. No restart!", d.name)
