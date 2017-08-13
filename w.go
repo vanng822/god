@@ -72,19 +72,17 @@ func watchDirs(dirs, exts string, restart chan bool) {
 	for {
 		select {
 		case event := <-watcher.Events:
-			//log.Println("event:", event)
-			if event.Op&fsnotify.Write == fsnotify.Write {
-				if len(allExts) > 0 {
-					for _, ext := range allExts {
-						if strings.HasSuffix(event.Name, ext) {
-							restart <- true
-							break
-						}
+			if len(allExts) > 0 {
+				for _, ext := range allExts {
+					if strings.HasSuffix(event.Name, ext) {
+						restart <- true
+						break
 					}
-				} else {
-					restart <- true
 				}
+			} else {
+				restart <- true
 			}
+
 		case err := <-watcher.Errors:
 			log.Println("error:", err)
 		}
