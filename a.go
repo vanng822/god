@@ -11,6 +11,7 @@ func usage() {
 Usage: god --pidfile daemonize.pid --pidclean --interval 86400 -s program args ...
 	--pidfile   A pidfile which process id will be stored.
 	--pidclean  Clean old pidfile if there is one and try to run this program
+	--graceful  Restart program in sequence
 	--interval  Number of seconds to restart all programs, given in integer. Minimum is %.0f seconds
 	--watch 		dirs to watch for file changes
  	--watch-exts file extenstions to watch, default by watching all extenstions
@@ -28,6 +29,7 @@ Example: god --pidfile god.pid -s sleep 10`+"\n", MIMIMUM_AGE)
 type Args struct {
 	args            []string
 	pidFile         string
+	graceful        bool
 	logFile         string
 	logFileErr      string
 	force           bool
@@ -61,6 +63,11 @@ func (a *Args) Parse(args []string) error {
 				return fmt.Errorf("Invalid pidfile value")
 			}
 			a.pidFile = args[i]
+			continue
+		}
+		if args[i] == "--graceful" {
+			i++
+			a.graceful = true
 			continue
 		}
 		if args[i] == "--interval" {

@@ -182,3 +182,11 @@ func TestArgsDelayError(t *testing.T) {
 	err := a.Parse(args)
 	assert.NotNil(t, err)
 }
+
+func TestArgsGraceful(t *testing.T) {
+	a := Args{}
+	args := []string{"--graceful"}
+	err := a.Parse(args)
+	assert.Nil(t, err)
+	assert.True(t, a.graceful)
+}

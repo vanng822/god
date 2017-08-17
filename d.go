@@ -28,7 +28,7 @@ func NewGod(name string, args []string) *God {
 	return d
 }
 
-func (d *God) Start() {
+func (d *God) Start(done chan bool) {
 	log.Printf("Start command '%s' ...", d.name)
 	cmd := exec.Command(d.name, d.args...)
 
@@ -51,14 +51,17 @@ func (d *God) Start() {
 	d.cmd = cmd
 	d.started = time.Now()
 	d.exited = false
-	go d.Watch()
+	go d.Watch(done)
 }
 
-func (d *God) Watch() {
+func (d *God) Watch(done chan bool) {
 	if d.cmd == nil {
 		panic("You must call Start first")
 	}
 	log.Printf("Waiting for command '%s' to finish...", d.name)
+	if done != nil {
+		done <- true
+	}
 	err := d.cmd.Wait()
 	d.exited = true
 	if err == nil {
@@ -75,13 +78,13 @@ func (d *God) Watch() {
 		log.Printf("Program '%s' restart too fast. No restart!", d.name)
 		return
 	}
-	d.Restart()
+	d.Restart(nil)
 }
 
-func (d *God) Restart() {
+func (d *God) Restart(done chan bool) {
 	log.Printf("Restart program %s", d.name)
 	d.Stop()
-	d.Start()
+	d.Start(done)
 }
 
 func (d *God) Stop() {

@@ -11,14 +11,17 @@ import (
 )
 
 type Goz struct {
-	gods   []*God
-	sigc   chan os.Signal
-	ticker *time.Ticker
+	gods         []*God
+	sigc         chan os.Signal
+	ticker       *time.Ticker
+	args         Args
+	gracefulWait time.Duration
 }
 
 func NewGoz() *Goz {
 	z := new(Goz)
 	z.gods = make([]*God, 0)
+	z.gracefulWait = 3 * time.Second
 	return z
 }
 
@@ -41,6 +44,8 @@ func (z *Goz) Start() {
 	}()
 
 	args := Args{}
+
+	z.args = args
 
 	if err := args.Parse(os.Args[1:]); err != nil {
 		usage()
@@ -86,7 +91,7 @@ func (z *Goz) Start() {
 	}
 
 	for _, d := range z.gods {
-		d.Start()
+		d.Start(nil)
 	}
 
 	if args.fileWatched {
@@ -97,7 +102,7 @@ func (z *Goz) Start() {
 			for {
 				select {
 				case <-restartTimer.C:
-					z.Restart()
+					z.Restart(args.graceful)
 				case restart := <-shouldRestart:
 					if restart {
 						restartTimer.Reset(time.Duration(1000 * 1000 * 1000 * args.delaySecs))
@@ -122,12 +127,13 @@ func (z *Goz) Start() {
 		log.Printf("Got signal %v", sig)
 		switch sig {
 		case syscall.SIGHUP:
-			z.Restart()
+			z.Restart(args.graceful)
 			z.startInterval(args.interval)
 		case syscall.SIGUSR1:
 			z.Signal(sig)
 		case syscall.SIGUSR2:
-			z.Signal(sig)
+			z.Restart(true)
+			z.startInterval(args.interval)
 		default:
 			log.Println("Stop program")
 			z.Stop()
@@ -152,7 +158,7 @@ func (z *Goz) startInterval(secs int) {
 		for {
 			select {
 			case <-z.ticker.C:
-				z.Restart()
+				z.Restart(z.args.graceful)
 			}
 		}
 	}()
@@ -169,9 +175,27 @@ func (z *Goz) Stop() {
 		d.Stop()
 	}
 }
+func waitDone(done chan bool) {
+	for {
+		select {
+		case <-done:
+			return
+		default:
+			time.Sleep(50 * time.Millisecond)
+		}
+	}
+}
+func (z *Goz) Restart(graceful bool) {
 
-func (z *Goz) Restart() {
 	for _, d := range z.gods {
-		d.Restart()
+		if graceful {
+			done := make(chan bool)
+			d.Restart(done)
+			waitDone(done)
+			close(done)
+			time.Sleep(z.gracefulWait)
+		} else {
+			d.Restart(nil)
+		}
 	}
 }

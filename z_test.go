@@ -1,11 +1,12 @@
 package main
 
 import (
-	"github.com/stretchr/testify/assert"
 	"os"
 	"syscall"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestUsage(t *testing.T) {
@@ -47,7 +48,7 @@ func TestRestart(t *testing.T) {
 	cmd := z.gods[0].cmd
 	assert.Nil(t, cmd.ProcessState)
 	// Prob
-	z.Restart()
+	z.Restart(false)
 	time.Sleep(100 * time.Millisecond)
 	assert.NotEqual(t, cmd.Process.Pid, z.gods[0].cmd.Process.Pid)
 	assert.NotNil(t, cmd.ProcessState)
@@ -69,6 +70,39 @@ func TestSignalSigHup(t *testing.T) {
 	time.Sleep(100 * time.Millisecond)
 	assert.NotEqual(t, cmd.Process.Pid, z.gods[0].cmd.Process.Pid)
 	assert.NotNil(t, cmd.ProcessState)
+}
+
+func TestSignalSigUsr2(t *testing.T) {
+	MIMIMUM_AGE = 0.1
+	os.Args = []string{"", "--pidfile", "testing.pid", "--pidclean", "-s", "sleep", "5", "-s", "sleep", "5"}
+	z := NewGoz()
+	z.gracefulWait = 100 * time.Millisecond
+	defer func() {
+		z.sigc <- syscall.SIGTERM
+		time.Sleep(200 * time.Millisecond)
+	}()
+	go z.Start()
+	time.Sleep(200 * time.Millisecond)
+	cmd := z.gods[0].cmd
+	cmd2 := z.gods[1].cmd
+	assert.Nil(t, cmd.ProcessState)
+	z.sigc <- syscall.SIGUSR2
+	time.Sleep(600 * time.Millisecond)
+	assert.NotEqual(t, cmd.Process.Pid, z.gods[0].cmd.Process.Pid)
+	assert.NotEqual(t, cmd2.Process.Pid, z.gods[1].cmd.Process.Pid)
+	assert.NotNil(t, cmd.ProcessState)
+	assert.NotNil(t, cmd2.ProcessState)
+
+	// Second time
+	cmd = z.gods[0].cmd
+	cmd2 = z.gods[1].cmd
+	assert.Nil(t, cmd.ProcessState)
+	z.sigc <- syscall.SIGUSR2
+	time.Sleep(600 * time.Millisecond)
+	assert.NotEqual(t, cmd.Process.Pid, z.gods[0].cmd.Process.Pid)
+	assert.NotEqual(t, cmd2.Process.Pid, z.gods[1].cmd.Process.Pid)
+	assert.NotNil(t, cmd.ProcessState)
+	assert.NotNil(t, cmd2.ProcessState)
 }
 
 func TestSignalKill(t *testing.T) {
@@ -120,7 +154,6 @@ func TestRecoverPanic(t *testing.T) {
 		z.Start()
 	})
 }
-
 
 func TestIntervalAutorestart(t *testing.T) {
 	MIMIMUM_AGE = 0.1
