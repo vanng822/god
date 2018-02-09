@@ -12,6 +12,9 @@ import (
 func scan(path string) ([]string, error) {
 	var folders []string
 	folder, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
 	stat, err := folder.Stat()
 	if err != nil {
 		return nil, err
@@ -19,9 +22,6 @@ func scan(path string) ([]string, error) {
 	// path can be a file
 	if !stat.IsDir() {
 		return folders, nil
-	}
-	if err != nil {
-		return nil, err
 	}
 	defer folder.Close()
 	files, err := folder.Readdir(-1)
