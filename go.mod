@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/fsnotify/fsnotify v1.8.0
-	github.com/stretchr/testify v1.11.0
+	github.com/stretchr/testify v1.11.1
 	github.com/vanng822/gopid v1.0.0
 )
 
