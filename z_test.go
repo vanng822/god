@@ -105,20 +105,6 @@ func TestSignalSigUsr2(t *testing.T) {
 	assert.NotNil(t, cmd2.ProcessState)
 }
 
-func TestSignalKill(t *testing.T) {
-	MIMIMUM_AGE = 0.1
-	os.Args = []string{"", "--pidfile", "testing.pid", "--pidclean", "-s", "sleep", "10"}
-	z := NewGoz()
-	go z.Start()
-	time.Sleep(200 * time.Millisecond)
-	cmd := z.gods[0].cmd
-	assert.Nil(t, cmd.ProcessState)
-	z.sigc <- os.Kill
-	time.Sleep(100 * time.Millisecond)
-	assert.Equal(t, cmd.Process.Pid, z.gods[0].cmd.Process.Pid)
-	assert.NotNil(t, cmd.ProcessState)
-}
-
 func TestSignalInterrupt(t *testing.T) {
 	MIMIMUM_AGE = 0.1
 	os.Args = []string{"", "--pidfile", "testing.pid", "--pidclean", "-s", "sleep", "10"}

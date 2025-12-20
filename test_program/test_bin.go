@@ -16,7 +16,7 @@ func main() {
 		log.Println("Hello")
 	})
 	sigc := make(chan os.Signal, 1)
-	signal.Notify(sigc, os.Kill, os.Interrupt, syscall.SIGTERM, syscall.SIGHUP)
+	signal.Notify(sigc, os.Interrupt, syscall.SIGTERM, syscall.SIGHUP)
 	log.Printf("test_bin listening at %d", 8080)
 	go http.ListenAndServe(":8080", nil)
 	sig := <-sigc

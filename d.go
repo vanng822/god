@@ -74,7 +74,7 @@ func (d *God) Watch(done chan bool) {
 		return
 	}
 	log.Printf("Command '%s' finished with error: %v", d.name, err)
-	if time.Now().Sub(d.started).Seconds() < MIMIMUM_AGE {
+	if time.Since(d.started).Seconds() < MIMIMUM_AGE {
 		log.Printf("Program '%s' restart too fast. No restart!", d.name)
 		return
 	}

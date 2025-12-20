@@ -155,11 +155,8 @@ func (z *Goz) startInterval(secs int) {
 	z.stopInterval()
 	z.ticker = time.NewTicker(time.Duration(secs) * time.Second)
 	go func() {
-		for {
-			select {
-			case <-z.ticker.C:
-				z.Restart(z.args.graceful)
-			}
+		for range z.ticker.C {
+			z.Restart(z.args.graceful)
 		}
 	}()
 }
