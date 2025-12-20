@@ -18,7 +18,7 @@ func TestUsage(t *testing.T) {
 
 func TestStop(t *testing.T) {
 	MIMIMUM_AGE = 0.1
-	os.Args = []string{"", "--pidfile", "testing.pid", "--pidclean", "-s", "sleep", "10"}
+	os.Args = []string{"", "--pidfile", "test_program/test_folder/stop.pid", "--pidclean", "-s", "sleep", "10"}
 	z := NewGoz()
 	defer func() {
 		z.sigc <- syscall.SIGTERM
@@ -37,7 +37,7 @@ func TestStop(t *testing.T) {
 
 func TestRestart(t *testing.T) {
 	MIMIMUM_AGE = 0.1
-	os.Args = []string{"", "--pidfile", "testing.pid", "--pidclean", "-s", "sleep", "10"}
+	os.Args = []string{"", "--pidfile", "test_program/test_folder/restart.pid", "--pidclean", "-s", "sleep", "10"}
 	z := NewGoz()
 	defer func() {
 		z.sigc <- syscall.SIGTERM
@@ -56,7 +56,7 @@ func TestRestart(t *testing.T) {
 
 func TestSignalSigHup(t *testing.T) {
 	MIMIMUM_AGE = 0.1
-	os.Args = []string{"", "--pidfile", "testing.pid", "--pidclean", "-s", "sleep", "10"}
+	os.Args = []string{"", "--pidfile", "test_program/test_folder/sighup.pid", "--pidclean", "-s", "sleep", "10"}
 	z := NewGoz()
 	defer func() {
 		z.sigc <- syscall.SIGTERM
@@ -74,7 +74,7 @@ func TestSignalSigHup(t *testing.T) {
 
 func TestSignalSigUsr2(t *testing.T) {
 	MIMIMUM_AGE = 0.1
-	os.Args = []string{"", "--pidfile", "testing.pid", "--pidclean", "-s", "sleep", "5", "-s", "sleep", "5"}
+	os.Args = []string{"", "--pidfile", "test_program/test_folder/sigusr2.pid", "--pidclean", "-s", "sleep", "5", "-s", "sleep", "5"}
 	z := NewGoz()
 	z.gracefulWait = 100 * time.Millisecond
 	defer func() {
@@ -107,7 +107,7 @@ func TestSignalSigUsr2(t *testing.T) {
 
 func TestSignalInterrupt(t *testing.T) {
 	MIMIMUM_AGE = 0.1
-	os.Args = []string{"", "--pidfile", "testing.pid", "--pidclean", "-s", "sleep", "10"}
+	os.Args = []string{"", "--pidfile", "test_program/test_folder/interrupt.pid", "--pidclean", "-s", "sleep", "10"}
 	z := NewGoz()
 	go z.Start()
 	time.Sleep(200 * time.Millisecond)
@@ -121,7 +121,7 @@ func TestSignalInterrupt(t *testing.T) {
 
 func TestSignalOther(t *testing.T) {
 	MIMIMUM_AGE = 0.1
-	os.Args = []string{"", "--pidfile", "testing.pid", "--pidclean", "-s", "sleep", "10"}
+	os.Args = []string{"", "--pidfile", "test_program/test_folder/other.pid", "--pidclean", "-s", "sleep", "10"}
 	z := NewGoz()
 	go z.Start()
 	time.Sleep(200 * time.Millisecond)
@@ -134,7 +134,7 @@ func TestSignalOther(t *testing.T) {
 }
 
 func TestRecoverPanic(t *testing.T) {
-	os.Args = []string{"", "--pidfile", "testing.pid", "--pidclean", "-s", "sleep", "100", "-s", "./something"}
+	os.Args = []string{"", "--pidfile", "test_program/test_folder/recover_panic.pid", "--pidclean", "-s", "sleep", "100", "-s", "./something"}
 	z := NewGoz()
 	assert.NotPanics(t, func() {
 		z.Start()
@@ -143,7 +143,7 @@ func TestRecoverPanic(t *testing.T) {
 
 func TestIntervalAutorestart(t *testing.T) {
 	MIMIMUM_AGE = 0.1
-	os.Args = []string{"", "--pidfile", "testing.pid", "--pidclean", "--interval", "2", "-s", "sleep", "1"}
+	os.Args = []string{"", "--pidfile", "test_program/test_folder/interval_autorestart.pid", "--pidclean", "--interval", "2", "-s", "sleep", "1"}
 	z := NewGoz()
 	defer func() {
 		z.sigc <- syscall.SIGTERM
@@ -159,7 +159,7 @@ func TestIntervalAutorestart(t *testing.T) {
 
 func TestSignal(t *testing.T) {
 	MIMIMUM_AGE = 0.1
-	os.Args = []string{"", "--pidfile", "testing.pid", "--pidclean", "-s", "sleep", "5"}
+	os.Args = []string{"", "--pidfile", "test_program/test_folder/signal.pid", "--pidclean", "-s", "sleep", "1"}
 	z := NewGoz()
 	defer func() {
 		z.sigc <- syscall.SIGTERM
@@ -176,4 +176,6 @@ func TestSignal(t *testing.T) {
 	z.sigc <- syscall.SIGUSR2
 	time.Sleep(200 * time.Millisecond)
 	assert.NotEqual(t, cmd.Process.Pid, z.gods[0].cmd.Process.Pid)
+	// Seems problem with restarting, kill it before end test
+	z.sigc <- syscall.SIGTERM
 }
