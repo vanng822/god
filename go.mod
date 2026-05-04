@@ -1,9 +1,9 @@
 module github.com/vanng822/god
 
-go 1.20
+go 1.23
 
 require (
-	github.com/fsnotify/fsnotify v1.9.0
+	github.com/fsnotify/fsnotify v1.10.1
 	github.com/stretchr/testify v1.11.1
 	github.com/vanng822/gopid v1.0.0
 )
